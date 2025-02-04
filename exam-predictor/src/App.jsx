@@ -1,24 +1,30 @@
-import React, { useState } from 'react';
+// filepath: /c:/Users/bobtt/OneDrive/Desktop/Documents/JackCS/exam-predictor/frontend/src/components/UserList.js
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-function App() {
-  const [prediction, setPrediction] = useState(null);
+const UserList = () => {
+    const [users, setUsers] = useState([]);
 
-  const handlePredict = async () => {
-    const response = await axios.post('http://localhost:8000/api/predict/', {
-      feeling: 75,
-      study_hours: 7
-    });
-    setPrediction(response.data.prediction);
-  };
+    useEffect(() => {
+        axios.get('/api/users/')
+            .then(response => {
+                setUsers(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the users!', error);
+            });
+    }, []);
 
-  return (
-    <div>
-      <h1>Exam Score Predictor</h1>
-      <button onClick={handlePredict}>Predict Score</button>
-      {prediction && <p>Predicted Score: {prediction}</p>}
-    </div>
-  );
-}
+    return (
+        <div>
+            <h1>User List</h1>
+            <ul>
+                {users.map(user => (
+                    <li key={user.id}>{user.username}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
 
-export default App;
+export default UserList;
